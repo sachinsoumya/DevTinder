@@ -1,0 +1,16 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "Tinder for devs",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "nodejs",
+    "javascript"
+  ],
+  "author": "Soumya Sachin",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
