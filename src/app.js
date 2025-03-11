@@ -4,39 +4,27 @@ const express = require("express");
 
 const app = express();
 
-// console.log(app);
 
-// app.use("/", (req, res) => {
-//   res.send("Hello from dashboard .....");
-
-// });
-
-app.use("/home/123", (req, res) => {
-  res.send("Welcome to home 123💕💕😁");
+app.get("/user", (req, res) => {
+  res.send({ firstName: "Sachin", lastName: "Panda" });
 });
 
-app.use("/home", (req, res) => {
-  res.send("Hello from home😊☀️");
+app.post("/user", (req, res) => {
+  //* saving data to database via post call
+  res.send("Saving data to database...");
 });
 
-app.use("/test/12", (req, res) => {
-  res.send("This is test 2💓");
+app.put("/user",(req,res)=>{
+  res.send('users updated  successfully');
+});
+
+
+app.delete("/user", (req, res) => {
+  res.send("Deleted data from database successfully..");
 });
 
 app.use("/test", (req, res) => {
   res.send("Hello world from express javascript..");
-});
-
-app.use("/hello", (req, res) => {
-  res.send("1");
-});
-
-app.use("/about123", (req, res) => {
-  res.send("This is about route");
-});
-
-app.use("/", (req, res) => {
-  res.send("Hello from dashboard .....");
 });
 
 app.listen(7777, () => {
