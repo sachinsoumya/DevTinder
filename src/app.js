@@ -10,6 +10,32 @@ const app = express();
 //* Handle middlewares for all the requests like get , post , put ,patch , delete
 app.use("/admin", adminAuth);
 
+
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    //we can log the error here
+    res.status(500).send('something went wrong');
+  }
+});
+
+app.get("/getUserData", (req, res, next) => {
+  //* Logic of db call and get the user data
+
+  // try {
+    throw new Error("xyzvfhfjfkl");
+    res.send("User data sent");
+  // } catch (err) {
+  //   res.status(500).send(`something went wrong ${err.message}`);
+  // }
+});
+
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    //we can log the error here
+    res.status(500).send('something went wrong');
+  }
+});
+
 app.post("/user/login", (req, res, next) => {
   res.send("logged in successfully");
 });
