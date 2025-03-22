@@ -1,59 +1,50 @@
 const express = require("express");
 
-const { adminAuth, userAuth } = require("./middlewares/auth");
+// const { adminAuth, userAuth } = require("./middlewares/auth");
 
 // console.log(typeof express);
 
 const app = express();
 
-// console.log(app.use("/" ,(a,b,c)=>{}));
-//* Handle middlewares for all the requests like get , post , put ,patch , delete
-app.use("/admin", adminAuth);
+const connectDb = require("./config/database");
 
+const User = require("./models/user");
 
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    //we can log the error here
-    res.status(500).send('something went wrong');
-  }
-});
+console.log(require("./config/database"));
 
-app.get("/getUserData", (req, res, next) => {
-  //* Logic of db call and get the user data
+require("./config/database");
 
-  // try {
-    throw new Error("xyzvfhfjfkl");
-    res.send("User data sent");
-  // } catch (err) {
-  //   res.status(500).send(`something went wrong ${err.message}`);
+app.post("/signup", async (req, res) => {
+  // const userObj = {
+  //   firstName : "John",
+  //   lastName:"Smith",
+  //   email:"John@example.com",
+  //   password:"John1234"
   // }
-});
+  //* Creating a new instance of the user model
+  const user = new User({
+    firstName: "Surya",
+    lastName: "Kumar",
+    email: "Surya@example.com",
+    password: "Sun234",
+  });
 
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    //we can log the error here
-    res.status(500).send('something went wrong');
+  try {
+    await user.save();
+    res.send("User added successfully");
+  } catch (err) {
+    res.send(err.message);
   }
 });
 
-app.post("/user/login", (req, res, next) => {
-  res.send("logged in successfully");
-});
+connectDb()
+  .then(() => {
+    console.log("Database connection established");
 
-app.get("/user/data", userAuth, (req, res, next) => {
-  res.send("User data is already sent");
-});
-
-app.get("/admin/getAllData", (req, res, next) => {
-  //* Logic for checking the user is authorised or not
-  res.send("all data are sent");
-});
-
-app.get("/admin/deleteUser", (req, res) => {
-  //* Logic for checking the user is authorised or not
-  res.send("Deleted user successfully");
-});
-
-app.listen(7777, () => {
-  console.log("server is sucessfully in port 7777....");
-});
+    app.listen(7777, () => {
+      console.log("server is sucessfully in port 7777....");
+    });
+  })
+  .catch((err) => {
+    console.log("Error connecting to database: " + err.message);
+  });
