@@ -74,6 +74,36 @@ app.get("/user", async (req, res) => {
   }
 });
 
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete({ _id: userId });
+
+    // const user = await User.findByIdAndDelete(userId);
+
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+//*Update the user data.
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+
+  const data = req.body;
+
+  try {
+    // const user = await User.findByIdAndUpdate(userId, data , {returnDocument:'before'});
+    // console.log(user);
+    const user = await User.findOneAndUpdate({ email: req.body.email }, data);
+    console.log(user);
+    res.send("User updated successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 //* Feed Api = getting
 
 connectDb()
