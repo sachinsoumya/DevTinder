@@ -93,14 +93,19 @@ app.patch("/user", async (req, res) => {
 
   const data = req.body;
 
+  console.log(userId);
+
   try {
-    // const user = await User.findByIdAndUpdate(userId, data , {returnDocument:'before'});
-    // console.log(user);
-    const user = await User.findOneAndUpdate({ email: req.body.email }, data);
+    const user = await User.findByIdAndUpdate(userId, data, {
+      returnDocument: "before",
+      runValidators: "true",
+    });
     console.log(user);
+    // const user = await User.findOneAndUpdate({ email: req.body.email }, data);
+    // console.log(user);
     res.send("User updated successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send("Updation Failed Something went wrong" + err.message);
   }
 });
 
