@@ -1,5 +1,7 @@
 const express = require("express");
 
+const mongoose = require("mongoose");
+
 // const { adminAuth, userAuth } = require("./middlewares/auth");
 
 // console.log(typeof express);
@@ -88,15 +90,34 @@ app.delete("/user", async (req, res) => {
 });
 
 //*Update the user data.
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res) => {
+  console.log(req.params);
+  const userId = req.params?.userId;
 
   const data = req.body;
 
   console.log(userId);
+  // console.log(mongoose.Types.ObjectId.isValid(userId));
+
+  // const userid = mongoose.Types.ObjectId(userId)
 
   try {
-    const user = await User.findByIdAndUpdate(userId, data, {
+    const allowedUpdate = ["gender", "photoUrl", "about", "skills", "age"];
+
+    const isUserUpdate = Object.keys(data).every((item) =>
+      allowedUpdate.includes(item)
+    );
+
+    console.log(isUserUpdate);
+
+    if (!isUserUpdate) {
+      throw new Error("can't update user");
+    }
+
+    if (data.skills?.length > 10) {
+      throw new Error("you can only update upto 10 skills");
+    }
+    const user = await User.findByIdAndUpdate({ _id: userId}, data, {
       returnDocument: "before",
       runValidators: "true",
     });
