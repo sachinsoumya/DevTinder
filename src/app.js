@@ -2,6 +2,10 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 
+const bcrypt = require("bcrypt");
+
+const { validateSignUpData } = require("./utils/validation");
+
 // const { adminAuth, userAuth } = require("./middlewares/auth");
 
 // console.log(typeof express);
@@ -21,20 +25,58 @@ app.use(express.json());
 app.post("/signup", async (req, res) => {
   console.log(req);
   console.log(req.body);
-  // const userObj = {
-  //   firstName : "John",
-  //   lastName:"Smith",
-  //   email:"John@example.com",
-  //   password:"John1234"
-  // }
-  //* Creating a new instance of the user model
-  const user = new User(req.body);
+
+  const { firstName, lastName, email, password, age, gender, skills } =
+    req.body;
 
   try {
+    //* Validation of data
+
+    validateSignUpData(req);
+
+    //* Encrypt the password - Once you encrypt the password then it can not be decrypted.
+
+    const passwordHash = await bcrypt.hash(req.body.password, 10);
+
+    console.log(passwordHash);
+
+    //* Creating a new instance of the user model
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: passwordHash,
+      age,
+      gender,
+      skills,
+    });
+
     await user.save();
     res.send("User added successfully");
   } catch (err) {
-    res.send(err.message);
+    res.status(400).send(err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error("Invalid credentials");
+    } else {
+      res.send("Login successful");
+    }
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 });
 
@@ -117,7 +159,7 @@ app.patch("/user/:userId", async (req, res) => {
     if (data.skills?.length > 10) {
       throw new Error("you can only update upto 10 skills");
     }
-    const user = await User.findByIdAndUpdate({ _id: userId}, data, {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "before",
       runValidators: "true",
     });
