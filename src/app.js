@@ -2,17 +2,15 @@ const express = require("express");
 
 const mongoose = require("mongoose");
 
-const bcrypt = require("bcrypt");
-
 const cookieParser = require("cookie-parser");
 
+const authRouter = require("./Routes/auth");
+
+const profileRouter = require("./Routes/profile");
+
+const requestRouter = require("./Routes/request");
+
 // const jwt = require("jsonwebtoken");
-
-const { validateSignUpData } = require("./utils/validation");
-
-const { userAuth } = require("./middlewares/auth");
-
-const { user } = require("./models/user");
 
 // const { adminAuth, userAuth } = require("./middlewares/auth");
 
@@ -22,8 +20,6 @@ const app = express();
 
 const connectDb = require("./config/database");
 
-const User = require("./models/user");
-
 console.log(require("./config/database"));
 
 require("./config/database");
@@ -32,103 +28,11 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", profileRouter);
+
 console.log(typeof User);
-
-app.post("/signup", async (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
-  const { firstName, lastName, email, password, age, gender, skills } =
-    req.body;
-
-  try {
-    //* Validation of data
-
-    validateSignUpData(req);
-
-    //* Encrypt the password - Once you encrypt the password then it can not be decrypted.
-
-    const passwordHash = await bcrypt.hash(req.body.password, 10);
-
-    console.log(passwordHash);
-
-    //* Creating a new instance of the user model
-    const user = new User({
-      firstName,
-      lastName,
-      email,
-      password: passwordHash,
-      age,
-      gender,
-      skills,
-    });
-
-    await user.save();
-    res.send("User added successfully");
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-});
-
-app.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email: email });
-
-    if (!user) {
-      throw new Error("Invalid credentials");
-    }
-
-    const isPasswordValid = await user.verifyPassword(password);
-
-    if (!isPasswordValid) {
-      throw new Error("Invalid credentials");
-    } else {
-      //* Create a JWT token
-
-      const token = await user.getJwtToken();
-
-      if (!token) {
-        throw new Error("Invalid Token");
-      }
-
-      console.log(token);
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      //*Add  the token to the cookie and send back the response to the user
-
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
-      });
-
-      res.send("Login successful");
-    }
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-});
-
-app.get("/profile", userAuth, async (req, res) => {
-  try {
-    const { user } = req;
-
-    res.send(user);
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-
-  // res.send(cookies);
-});
-
-app.post("/sendConnectionRequest", userAuth, async (req, res) => {
-  const user = req.user;
-  console.log("Sending connection request");
-  res.send(user.firstName + " " + " is sending connection request sent");
-});
 
 // app.get("/feed", async (req, res) => {
 //   try {
