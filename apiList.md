@@ -5,7 +5,7 @@
    - POST /SignUp
    - POST /Login
    - POST /Logout
-   - PATCH /Update
+   
 
  ## profileRouter
 
