@@ -1,21 +1,25 @@
+// import user from "./user";
+
 const mongoose = require("mongoose");
 
 const connectionSchema = new mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User", //* Reference to the user connection
       required: true,
     },
 
     toUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
 
     status: {
       type: String,
       enum: {
-        values: ["interested", "ignored"],
+        values: ["interested", "ignored", "accepted", "rejected"],
         message: `{VALUE} is incorrect status type`,
         required: true,
       },
@@ -26,7 +30,7 @@ const connectionSchema = new mongoose.Schema(
   }
 );
 
-connectionSchema.index({fromUserId:1 , toUserId:1});
+connectionSchema.index({ fromUserId: 1, toUserId: 1 });
 
 connectionSchema.pre("save", function (next) {
   const connectionRequest = this;
