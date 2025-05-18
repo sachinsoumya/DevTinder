@@ -7,7 +7,7 @@ const userAuth = async (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
-      throw new Error("Token is not Valid !!!!!!!!");
+      return res.status(401).send("Unauthorized access, please login again");
     }
 
     //*Validate the token
@@ -28,7 +28,7 @@ const userAuth = async (req, res, next) => {
 
     next();
   } catch (err) {
-    res.status(400).send("Error : " + err.message);
+     res.status(400).send("Error : " + err.message);
   }
 };
 

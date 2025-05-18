@@ -117,7 +117,7 @@ requestRouter.post(
 
       const data = await ConnectionRequest.save();
 
-      res.json({ message: "connection request", data: data });
+       res.json({ message: "connection request", data: data });
 
       //* status = interested
 
