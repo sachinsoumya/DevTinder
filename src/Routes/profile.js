@@ -70,15 +70,15 @@ profileRouter.patch(
 
       console.log("loggedInUser" + loggedInUser);
 
-      // if (req.file) {
-      //   fs.unlink(req.file.path, (err) => {
-      //     if (err) {
-      //       console.error("Error deleting the file:", err);
-      //       return;
-      //     }
-      //     console.log("File deleted successfully");
-      //   });
-      // }
+      if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) {
+            console.error("Error deleting the file:", err);
+            return;
+          }
+          console.log("File deleted successfully");
+        });
+      }
 
       res.json({
         message: `${loggedInUser.firstName} , your profile has been updated`,
