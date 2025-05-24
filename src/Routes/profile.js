@@ -81,7 +81,7 @@ profileRouter.patch(
       }
 
       res.json({
-        // message: `${loggedInUser.firstName} , your profile has been updated`,
+        message: `${loggedInUser.firstName} , your profile has been updated`,
         data: loggedInUser,
       });
 
